@@ -96,7 +96,7 @@ export const userRememberLogin = createAsyncThunk(
                 method: 'POST'
             });
             if (!response.ok) {
-                throw new Error(response.status + ', unexpected user id');
+                throw new Error(response.status + ', unauthorized token');
             }
             const data = await response.json();
             const userinfo = await data.body;
