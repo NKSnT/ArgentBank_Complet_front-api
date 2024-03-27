@@ -1,0 +1,212 @@
+openapi: 3.0.1
+info:
+    title: Bank Argent API documentation part 2
+    description: Contains all available API endpoints in this codebase
+    termsOfService: http://swagger.io/terms/
+    version: 1.0.0
+servers:
+    - url: http://localhost:3001/api/v1
+paths:
+    /user/profile/account:
+        get:
+            tags:
+                - User Module
+            summary: Account List
+            description: API for fetching user's Account List
+            parameters:
+                - name: Authorization
+                  in: header
+                  description: Attach Bearer JWT token
+                  required: true
+                  schema: {}
+            responses:
+                '200':
+                    description: Account list retrieved uccessfully
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ApiResponseGetAllAcc'
+                '400':
+                    description: Invalid Fields
+                    content: {}
+                '500':
+                    description: Internal Server Error
+                    content: {}
+    /user/profile/account/{id}:
+        get:
+            tags:
+                - User Module
+            summary: Account Détail
+            description: API for fetching user's slected account transactions
+            parameters:
+                - name: Authorization
+                  in: header
+                  description: Attach Bearer JWT token
+                  required: true
+                  schema: {}
+                - name: id
+                  in: path
+                  description: Attach Account ID
+                  required: true
+                  schema: {}
+            responses:
+                '200':
+                    description: Account detail retrieved uccessfully
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ApiResponseGetOneAcc'
+                '400':
+                    description: Invalid Fields
+                    content: {}
+                '404':
+                    description: requested item not found
+                    content: {}
+                '500':
+                    description: Internal Server Error
+                    content: {}
+
+        put:
+            tags:
+                - User Module
+            summary: Transactions detail API
+            description: API for updating a transaction
+            parameters:
+                - name: Authorization
+                  in: header
+                  description: Attach Bearer JWT token
+                  required: true
+                  schema: {}
+                - name: id
+                  in: path
+                  description: Attach Account ID
+                  required: true
+                  schema: {}
+            requestBody:
+                description: Update transaction attributes
+                content:
+                    '*/*':
+                        schema:
+                            $ref: '#/components/schemas/TransactionLite'
+                required: true
+            responses:
+                '200':
+                    description: Transaction updated successully
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ApiResponsePutTransaction'
+                '400':
+                    description: Invalid Fields
+                    content: {}
+                '404':
+                    description: requested item not found
+                    content: {}
+                '500':
+                    description: Internal Server Error
+                    content: {}
+            security:
+                - Bearer: []
+
+components:
+    schemas:
+        TransactionLite:
+            type: object
+            properties:
+                id:
+                    type: number
+                    description: transaction id
+                info:
+                    type: object
+                    properties:
+                        catégory:
+                            type: string
+                            description: catégorie of the transaction (editable)
+                        notes:
+                            type: string
+                            description: additional notes (editable)
+        Transaction:
+            type: object
+            properties:
+                id:
+                    type: number
+                    description: transaction id
+                info:
+                    type: object
+                    properties:
+                        amount:
+                            type: number
+                            description: transaction amount
+                        balanceModifier:
+                            type: number
+                            description: balance at the moment of the transaction
+                        description:
+                            type: string
+                            description: transaction initiator
+                        date:
+                            type: string
+                            description: date of the transaction
+                        type:
+                            type: string
+                            description: type of the transaction
+                        catégory:
+                            type: string
+                            description: catégorie of the transaction (editable)
+                        notes:
+                            type: string
+                            description: additional notes (editable)
+        Account:
+            type: object
+            properties:
+                name:
+                    type: string
+                    description: account name
+                id:
+                    type: number
+                    description: account id
+                balance:
+                    type: number
+                    description: account balance
+        ApiResponseGetAllAcc:
+            type: object
+            properties:
+                status:
+                    type: integer
+                message:
+                    type: string
+                body:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/Account'
+        ApiResponseGetOneAcc:
+            type: object
+            properties:
+                status:
+                    type: integer
+                message:
+                    type: string
+                body:
+                    type: object
+                    properties:
+                        id:
+                            type: string
+                            description: account id
+                        transactionList:
+                            type: array
+                            items:
+                                $ref: '#/components/schemas/Transaction'
+                        additionalInfo:
+                            type: string
+        ApiResponsePutTransaction:
+            type: object
+            properties:
+                status:
+                    type: integer
+                message:
+                    type: string
+
+    securitySchemes:
+        Bearer:
+            type: apiKey
+            name: Authorization
+            in: header

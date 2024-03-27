@@ -8,7 +8,6 @@ const backendURL = 'http://localhost:3001/api/v1';
 export const userLogin = createAsyncThunk(
     'auth/login',
     async ({ email, password, rememberMe }, { rejectWithValue }) => {
-        console.log(email);
         const logInForm_info = {
             email: `${email}`,
             password: `${password}`
@@ -26,7 +25,6 @@ export const userLogin = createAsyncThunk(
             const token = await data1.body.token;
             // store user's token in local storage
             //need to be stored only if remember me is checked
-            console.log(rememberMe);
             if (rememberMe == true) {
                 localStorage.setItem('userToken', token);
             }
@@ -52,25 +50,22 @@ export const userLogin = createAsyncThunk(
 );
 export const userEdit = createAsyncThunk(
     'auth/edit',
-    async ({ firstName, lastName, token }, { rejectWithValue }) => {
+    async ({ firstName, lastName, userToken }, { rejectWithValue }) => {
         const editForm_info = {
             firstName: `${firstName}`,
             lastName: `${lastName}`
         };
-        console.log('token : ');
-        console.log(token);
         try {
             const response = await fetch(`${backendURL}/user/profile`, {
                 body: JSON.stringify(editForm_info),
                 headers: {
                     Accept: 'application/json',
-                    Authorization: `Bearer${token}`,
+                    Authorization: `Bearer${userToken}`,
                     'Content-Type': 'application/json'
                 },
                 method: 'PUT'
             });
             const data = await response.json();
-            console.log(data);
             return data.body;
         } catch (error) {
             // return custom error message from backend if present
