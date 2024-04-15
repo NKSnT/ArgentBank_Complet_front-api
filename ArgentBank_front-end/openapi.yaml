@@ -32,12 +32,14 @@ paths:
                 '500':
                     description: Internal Server Error
                     content: {}
-    /user/profile/account/{id}:
+            security:
+                - Bearer: []
+    /user/account/{id}:
         get:
             tags:
                 - User Module
             summary: Account Détail
-            description: API for fetching user's slected account transactions
+            description: API for fetching user's slected account transactions List and other info
             parameters:
                 - name: Authorization
                   in: header
@@ -65,11 +67,48 @@ paths:
                 '500':
                     description: Internal Server Error
                     content: {}
+            security:
+                - Bearer: []
+    /user/transaction/{id}:
+        get:
+            tags:
+                - User Module
+            summary: Transaction Détail API
+            description: API for fetching user's slected transaction
+            parameters:
+                - name: Authorization
+                  in: header
+                  description: Attach Bearer JWT token
+                  required: true
+                  schema: {}
+                - name: id
+                  in: path
+                  description: Attach Transaction ID
+                  required: true
+                  schema: {}
+            responses:
+                '200':
+                    description: Account detail retrieved uccessfully
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Transaction'
+                '400':
+                    description: Invalid Fields
+                    content: {}
+                '404':
+                    description: requested item not found
+                    content: {}
+                '500':
+                    description: Internal Server Error
+                    content: {}
+            security:
+                - Bearer: []
 
         put:
             tags:
                 - User Module
-            summary: Transactions detail API
+            summary: Transactions Detail ModificationAPI
             description: API for updating a transaction
             parameters:
                 - name: Authorization
@@ -79,7 +118,7 @@ paths:
                   schema: {}
                 - name: id
                   in: path
-                  description: Attach Account ID
+                  description: Attach Transaction ID
                   required: true
                   schema: {}
             requestBody:
